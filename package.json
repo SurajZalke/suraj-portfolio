@@ -1,0 +1,23 @@
+{
+  "name": "suraj-portfolio-messaging",
+  "version": "1.0.0",
+  "description": "Email and WhatsApp messaging system for Suraj Zalke's portfolio",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["portfolio", "email", "whatsapp", "messaging"],
+  "author": "Suraj Zalke",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.7",
+    "cors": "^2.8.5",
+    "express-rate-limit": "^6.10.0",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
