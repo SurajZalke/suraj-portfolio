@@ -5,8 +5,19 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const app = express();
+
+// ── CORS ── must be before everything else, including express.json()
+const corsOptions = {
+  origin: true,          // reflect the request origin — allows any origin
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false,
+  optionsSuccessStatus: 204
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // handle preflight for every route
+
 app.use(express.json());
-app.use(cors());
 
 // Rate limiting to prevent abuse
 const limiter = rateLimit({
