@@ -1,10 +1,13 @@
 const express = require('express');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const app = express();
+
+// ── SendGrid Setup ──
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // ── CORS ── must be before everything else, including express.json()
 const corsOptions = {
@@ -26,15 +29,6 @@ const limiter = rateLimit({
   message: 'Too many messages sent from this IP, please try again later.'
 });
 
-// Email Configuration
-const emailTransporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD
-  }
-});
-
 // Twilio Configuration - Manual HTTP Request (bypasses SID format validation)
 const twilio_account_sid = process.env.TWILIO_ACCOUNT_SID;
 const twilio_auth_token = process.env.TWILIO_AUTH_TOKEN;
@@ -47,7 +41,7 @@ if (twilio_account_sid && twilio_auth_token) {
       const https = require('https');
       return new Promise((resolve, reject) => {
         const auth = Buffer.from(`${twilio_account_sid}:${twilio_auth_token}`).toString('base64');
-        
+
         const postData = new URLSearchParams({
           From: process.env.TWILIO_WHATSAPP_FROM.replace('whatsapp:', ''),
           To: to.startsWith('whatsapp:') ? to : `whatsapp:${to}`,
@@ -93,26 +87,29 @@ app.post('/api/send-message', limiter, async (req, res) => {
 
     // Validate input
     if (!name || !email || !message) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Name, email, and message are required' 
+      return res.status(400).json({
+        success: false,
+        error: 'Name, email, and message are required'
       });
     }
 
     // Email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Invalid email format' 
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid email format'
       });
     }
 
     const messageTime = new Date().toLocaleString();
 
-    // ========== SEND EMAIL TO SURAJ ==========
-    const emailOptions = {
-      from: process.env.EMAIL_USER,
+    // ========== SEND EMAIL TO SURAJ (via SendGrid) ==========
+    const emailToOwner = {
+      from: {
+        email: process.env.SENDGRID_FROM_EMAIL,   // must be a verified sender in SendGrid
+        name: 'Portfolio Contact Form'
+      },
       to: process.env.OWNER_EMAIL,
       subject: `New Portfolio Message from ${name}`,
       html: `
@@ -134,12 +131,15 @@ app.post('/api/send-message', limiter, async (req, res) => {
       `
     };
 
-    await emailTransporter.sendMail(emailOptions);
+    await sgMail.send(emailToOwner);
     console.log(`✓ Email sent to owner from ${email}`);
 
-    // ========== SEND CONFIRMATION EMAIL TO USER ==========
+    // ========== SEND CONFIRMATION EMAIL TO USER (via SendGrid) ==========
     const confirmationEmail = {
-      from: process.env.EMAIL_USER,
+      from: {
+        email: process.env.SENDGRID_FROM_EMAIL,   // must be a verified sender in SendGrid
+        name: 'Suraj Zalke'
+      },
       to: email,
       subject: 'Message Received - Suraj Zalke Portfolio',
       html: `
@@ -161,19 +161,19 @@ app.post('/api/send-message', limiter, async (req, res) => {
       `
     };
 
-    await emailTransporter.sendMail(confirmationEmail);
+    await sgMail.send(confirmationEmail);
     console.log(`✓ Confirmation email sent to ${email}`);
 
-    // ========== SEND WHATSAPP MESSAGE (Optional) ==========
+    // ========== SEND WHATSAPP MESSAGE (Optional - Twilio) ==========
     if (phone && twilioClient && process.env.TWILIO_WHATSAPP_FROM) {
       try {
         // Format phone number (should be in E.164 format, e.g., +1234567890)
         const formattedPhone = phone.startsWith('+') ? phone : '+91' + phone;
         const whatsappTo = `whatsapp:${formattedPhone}`;
-        
+
         console.log(`📱 Attempting to send WhatsApp to ${whatsappTo}`);
         await twilioClient.sendWhatsApp(whatsappTo, `Hi ${name}! 👋\n\nThank you for reaching out to Suraj Zalke! Your message has been received. Suraj will get back to you shortly.\n\nBest regards,\nSuraj Zalke\nAI Developer & Software Engineer`);
-        
+
         console.log(`✓ WhatsApp message sent to ${formattedPhone}`);
       } catch (whatsappError) {
         console.log(`⚠ WhatsApp message failed: ${whatsappError.message}`);
@@ -183,16 +183,22 @@ app.post('/api/send-message', limiter, async (req, res) => {
       }
     }
 
-    res.json({ 
-      success: true, 
-      message: 'Message sent successfully! Check your email for confirmation.' 
+    res.json({
+      success: true,
+      message: 'Message sent successfully! Check your email for confirmation.'
     });
 
   } catch (error) {
     console.error('Send Message Error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to send message. Please try again later.' 
+
+    // Surface SendGrid-specific error details in dev mode
+    if (error.response && error.response.body) {
+      console.error('SendGrid error details:', error.response.body.errors);
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'Failed to send message. Please try again later.'
     });
   }
 });

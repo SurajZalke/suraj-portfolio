@@ -30,3 +30,6 @@ build/
 # Temporary files
 temp/
 tmp/
+
+# Local Netlify folder
+.netlify
