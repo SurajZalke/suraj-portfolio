@@ -292,6 +292,9 @@ svg.connections path.active{stroke:var(--cyan);stroke-width:1.4;}
 .cert-gallery-item:nth-child(1){animation-delay:.1s;}
 .cert-gallery-item:nth-child(2){animation-delay:.2s;}
 .cert-gallery-item:nth-child(3){animation-delay:.3s;}
+.cert-gallery-item:nth-child(4){animation-delay:.4s;}
+.cert-gallery-item:nth-child(5){animation-delay:.5s;}
+.cert-gallery-item:nth-child(6){animation-delay:.6s;}
 
 @keyframes galleryReveal{
   from{opacity:0;transform:translateY(30px) rotateX(10deg) scale(.95);}
@@ -327,6 +330,9 @@ svg.connections path.active{stroke:var(--cyan);stroke-width:1.4;}
 .cert-card:nth-child(1){animation-delay:.15s;}
 .cert-card:nth-child(2){animation-delay:.3s;}
 .cert-card:nth-child(3){animation-delay:.45s;}
+.cert-card:nth-child(4){animation-delay:.6s;}
+.cert-card:nth-child(5){animation-delay:.75s;}
+.cert-card:nth-child(6){animation-delay:.9s;}
 
 .cert-card::before{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(84,230,255,.2),transparent);transition:left .7s;pointer-events:none;}
 
@@ -1547,6 +1553,48 @@ h1.headline .grad{
           </div>
         </div>
       </div>
+
+      <!-- Certificate 4: HackerRank Frontend Developer (React) -->
+      <div class="cert-gallery-item">
+        <div class="cert-image-wrapper cert-clickable" onclick="openCertModal('image copy 2.png', 'Frontend Developer (React)', 'October 16, 2026')">
+          <img src="image copy 2.png" alt="HackerRank Frontend Developer React Certificate" class="cert-image">
+          <div class="cert-overlay">
+            <div class="cert-overlay-text">
+              <h4>Frontend Developer (React)</h4>
+              <p>October 16, 2026</p>
+              <p class="cert-id">Click to view full certificate</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certificate 5: HackerRank C# Basic -->
+      <div class="cert-gallery-item">
+        <div class="cert-image-wrapper cert-clickable" onclick="openCertModal('image copy 5.png', 'C# (Basic)', 'October 16, 2026')">
+          <img src="image copy 5.png" alt="HackerRank C# Basic Certificate" class="cert-image">
+          <div class="cert-overlay">
+            <div class="cert-overlay-text">
+              <h4>C# (Basic)</h4>
+              <p>October 16, 2026</p>
+              <p class="cert-id">Click to view full certificate</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certificate 6: HierroShield Web Dev & AI -->
+      <div class="cert-gallery-item">
+        <div class="cert-image-wrapper cert-clickable" onclick="openCertModal('image copy 4.png', 'Web Development &amp; Emerging AI Technologies', 'October 24, 2026')">
+          <img src="image copy 4.png" alt="HierroShield Web Development and AI Technologies Certificate" class="cert-image">
+          <div class="cert-overlay">
+            <div class="cert-overlay-text">
+              <h4>Web Dev &amp; Emerging AI</h4>
+              <p>October 24, 2026</p>
+              <p class="cert-id">Click to view full certificate</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Certificate Details Cards with Proper Information -->
@@ -1636,6 +1684,96 @@ h1.headline .grad{
             <div class="back-row"><span>Issuer</span><b>Coursera (Google)</b></div>
             <div class="back-row"><span>Issued</span><b>2025</b></div>
             <div class="back-row"><span>Verify at</span><b>coursera.org/verify</b></div>
+            <p class="back-note">Tap again to flip back to the certificate summary.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Card 4: HackerRank React -->
+      <div class="cert-card" onclick="this.classList.toggle('flipped')">
+        <span class="cert-flip-hint">flip ↻</span>
+        <div class="cert-flip-inner">
+          <div class="cert-face cert-face-front">
+            <div class="cert-icon">⚛️</div>
+            <h3>Frontend Developer (React)</h3>
+            <div class="cert-issuer">HackerRank</div>
+            <div class="cert-date">📅 October 16, 2026</div>
+            <div class="cert-id-badge">
+              <span class="badge-label">Credential ID:</span>
+              <span class="badge-value">A9004C617OBE</span>
+            </div>
+            <p class="cert-desc">Certificate of Accomplishment for passing the HackerRank role certification test in React. Demonstrates proficiency in building modern frontend applications using React, component architecture, and state management.</p>
+            <div class="cert-tags">
+              <span>React</span>
+              <span>Frontend</span>
+              <span>HackerRank</span>
+            </div>
+          </div>
+          <div class="cert-face cert-face-back">
+            <div class="cert-icon">⚛️</div>
+            <div class="back-row"><span>Issuer</span><b>HackerRank</b></div>
+            <div class="back-row"><span>Issued</span><b>October 16, 2026</b></div>
+            <div class="back-row"><span>Credential ID</span><b>A9004C617OBE</b></div>
+            <p class="back-note">Tap again to flip back to the certificate summary.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Card 5: HackerRank C# -->
+      <div class="cert-card" onclick="this.classList.toggle('flipped')">
+        <span class="cert-flip-hint">flip ↻</span>
+        <div class="cert-flip-inner">
+          <div class="cert-face cert-face-front">
+            <div class="cert-icon">💻</div>
+            <h3>C# (Basic)</h3>
+            <div class="cert-issuer">HackerRank</div>
+            <div class="cert-date">📅 October 16, 2026</div>
+            <div class="cert-id-badge">
+              <span class="badge-label">Credential ID:</span>
+              <span class="badge-value">A1F4939190EF</span>
+            </div>
+            <p class="cert-desc">Certificate of Accomplishment for passing the HackerRank skill certification test in C#. Validates foundational knowledge of C# programming including data types, control flow, OOP concepts and .NET fundamentals.</p>
+            <div class="cert-tags">
+              <span>C#</span>
+              <span>.NET</span>
+              <span>HackerRank</span>
+            </div>
+          </div>
+          <div class="cert-face cert-face-back">
+            <div class="cert-icon">💻</div>
+            <div class="back-row"><span>Issuer</span><b>HackerRank</b></div>
+            <div class="back-row"><span>Issued</span><b>October 16, 2026</b></div>
+            <div class="back-row"><span>Credential ID</span><b>A1F4939190EF</b></div>
+            <p class="back-note">Tap again to flip back to the certificate summary.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Card 6: HierroShield -->
+      <div class="cert-card" onclick="this.classList.toggle('flipped')">
+        <span class="cert-flip-hint">flip ↻</span>
+        <div class="cert-flip-inner">
+          <div class="cert-face cert-face-front">
+            <div class="cert-icon">🌐</div>
+            <h3>Web Dev &amp; Emerging AI Technologies</h3>
+            <div class="cert-issuer">HierroShield Pvt. Ltd.</div>
+            <div class="cert-date">📅 October 24, 2026</div>
+            <div class="cert-id-badge">
+              <span class="badge-label">Issued by:</span>
+              <span class="badge-value">HierroShield Private Limited</span>
+            </div>
+            <p class="cert-desc">Certificate of Participation for successfully completing a 6-hour session on Web Development & Emerging AI Technologies. Covered AI tools, practical applications, hands-on demonstrations and real-world use cases.</p>
+            <div class="cert-tags">
+              <span>Web Dev</span>
+              <span>AI Tools</span>
+              <span>HierroShield</span>
+            </div>
+          </div>
+          <div class="cert-face cert-face-back">
+            <div class="cert-icon">🌐</div>
+            <div class="back-row"><span>Issuer</span><b>HierroShield Pvt. Ltd.</b></div>
+            <div class="back-row"><span>Issued</span><b>October 24, 2026</b></div>
+            <div class="back-row"><span>Session</span><b>6 Hours</b></div>
             <p class="back-note">Tap again to flip back to the certificate summary.</p>
           </div>
         </div>
