@@ -654,12 +654,234 @@ body.recruiter .reveal{opacity:1!important;transform:none!important;}
 #about-particles{position:absolute;inset:0;z-index:0;opacity:.55;pointer-events:none;width:100%;height:100%;}
 .about-grid{position:relative;z-index:1;}
 
+/* ---------- 3D model viewers ---------- */
+.model-viewer{position:relative;height:320px;border-radius:14px;border:1px solid var(--line-strong);background:radial-gradient(circle at 50% 40%, rgba(84,230,255,.06), transparent 70%);overflow:hidden;margin:36px 0 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.model-viewer canvas{width:100%;height:100%;display:block;}
+.model-viewer .model-label{position:absolute;bottom:14px;left:18px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;color:var(--cyan);opacity:.85;text-transform:uppercase;pointer-events:none;}
+.model-viewer::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:14px;box-shadow:inset 0 0 60px rgba(0,0,0,.5);}
+.model-viewer-sm{height:220px;}
+@media(max-width:700px){.model-viewer{height:240px;}.model-viewer-sm{height:180px;}}
+
+/* ---------- 3D flip certification cards ---------- */
+.cert-card{perspective:1400px;}
+.cert-card .cert-flip-inner{position:relative;width:100%;transition:transform .7s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d;}
+.cert-card.flipped .cert-flip-inner{transform:rotateY(180deg);}
+.cert-card .cert-face{backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+.cert-card .cert-face-back{position:absolute;inset:0;transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:center;gap:14px;padding:4px;}
+.cert-flip-hint{position:absolute;top:14px;right:14px;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;color:var(--muted-2);border:1px solid var(--line);padding:4px 9px;border-radius:12px;text-transform:uppercase;z-index:2;background:rgba(5,7,10,.4);}
+.cert-card:hover .cert-flip-hint{color:var(--cyan);border-color:var(--cyan);}
+.cert-face-back .back-row{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:10px;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);}
+.cert-face-back .back-row b{color:var(--text);font-weight:500;}
+.cert-face-back .back-note{color:var(--muted);font-size:12.5px;line-height:1.6;font-family:var(--font-body);}
+
+/* ---------- varied scroll-reveal directions ---------- */
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1);}
+.reveal-left.in{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1);}
+.reveal-right.in{opacity:1;transform:translateX(0);}
+.reveal-scale{opacity:0;transform:scale(.92);transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);}
+.reveal-scale.in{opacity:1;transform:scale(1);}
+.reveal-blur{opacity:0;filter:blur(10px);transform:translateY(16px);transition:opacity .8s ease, filter .8s ease, transform .8s ease;}
+.reveal-blur.in{opacity:1;filter:blur(0);transform:translateY(0);}
+@media(prefers-reduced-motion: reduce){
+  .reveal-left,.reveal-right,.reveal-scale,.reveal-blur{opacity:1!important;transform:none!important;filter:none!important;transition:none!important;}
+}
+
 #easter{position:fixed;inset:0;background:rgba(3,5,10,.92);z-index:9998;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
 #easter.show{display:flex;}
 .easter-box{font-family:var(--font-mono);font-size:13px;line-height:2.1;color:var(--cyan);border:1px solid var(--cyan);padding:34px 40px;border-radius:4px;background:#03050a;text-align:left;}
 .easter-box .t{color:var(--muted);font-size:11px;letter-spacing:.1em;margin-bottom:14px;}
 .easter-box b{color:#6ee7a0;}
 .easter-close{margin-top:18px;font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;display:block;}
+
+/* ---------- hero headline shimmer ---------- */
+@keyframes gradShimmer{
+  0%{background-position:0% 50%;}
+  100%{background-position:200% 50%;}
+}
+h1.headline .grad{
+  background:linear-gradient(90deg,var(--cyan),var(--blue) 35%,var(--violet) 60%,var(--cyan));
+  background-size:200% auto;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  animation:gradShimmer 4s linear infinite;
+}
+
+/* ---------- about photo outer pulsing glow ring ---------- */
+@keyframes outerGlowPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(84,230,255,0), 0 0 30px rgba(84,230,255,0.08);}
+  50%{box-shadow:0 0 0 12px rgba(84,230,255,0.07), 0 0 60px rgba(84,230,255,0.22);}
+}
+.about-photo-frame{animation:outerGlowPulse 3.5s ease-in-out infinite;}
+
+/* ---------- cert card 3D parallax tilt + golden shimmer ---------- */
+.cert-card{
+  --mx:50%;--my:50%;
+  transform-style:preserve-3d;
+  will-change:transform;
+  transition:transform .15s ease-out, border-color .4s, box-shadow .4s, background .4s;
+}
+.cert-card:hover{
+  border-color:rgba(255,200,80,.6);
+  background:linear-gradient(135deg,rgba(255,200,80,.10),rgba(84,230,255,.06));
+  box-shadow:0 24px 70px rgba(255,200,80,.18), 0 0 40px rgba(255,200,80,.10);
+}
+/* override cyan shimmer sweep with golden one */
+.cert-card::before{background:linear-gradient(90deg,transparent,rgba(255,200,80,.35),transparent)!important;}
+.cert-shine{position:absolute;inset:0;pointer-events:none;border-radius:12px;opacity:0;transition:opacity .3s;background:radial-gradient(circle at var(--mx) var(--my), rgba(255,200,80,.18), transparent 55%);}
+.cert-card:hover .cert-shine{opacity:1;}
+
+/* ---------- stagger reveal for section children (nth-child) ---------- */
+.section > .wrap > *:nth-child(1){transition-delay:0ms;}
+.section > .wrap > *:nth-child(2){transition-delay:60ms;}
+.section > .wrap > *:nth-child(3){transition-delay:120ms;}
+.section > .wrap > *:nth-child(4){transition-delay:180ms;}
+.section > .wrap > *:nth-child(5){transition-delay:240ms;}
+.section > .wrap > *:nth-child(6){transition-delay:300ms;}
+
+/* ---------- partner section ---------- */
+#partner{position:relative;overflow:hidden;}
+#partner-particles{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;width:100%;height:100%;}
+
+/* connection visual */
+.collab-nodes{display:flex;align-items:center;justify-content:center;gap:0;margin:36px 0 48px;position:relative;z-index:1;}
+.collab-node{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.collab-node-dot{width:48px;height:48px;border-radius:50%;border:1px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;color:var(--cyan);background:var(--cyan-dim);box-shadow:0 0 24px rgba(84,230,255,.18);letter-spacing:.08em;}
+.collab-node-label{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;}
+.collab-line{flex:1;max-width:120px;position:relative;height:1px;background:linear-gradient(90deg,var(--cyan),var(--violet));opacity:.5;margin:0 8px;}
+.collab-line::before{content:"";position:absolute;top:50%;left:0;right:0;height:1px;background:inherit;animation:lineFlow 2s linear infinite;}
+@keyframes lineFlow{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+.collab-mid{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.collab-mid-icon{width:32px;height:32px;border-radius:50%;border:1px dashed var(--violet);background:rgba(142,123,255,.08);display:flex;align-items:center;justify-content:center;font-size:14px;animation:midPulse 2s ease-in-out infinite;}
+@keyframes midPulse{0%,100%{box-shadow:0 0 0 0 rgba(142,123,255,0);}50%{box-shadow:0 0 0 8px rgba(142,123,255,.12);}}
+.collab-mid-text{font-family:var(--font-mono);font-size:9px;color:var(--muted-2);letter-spacing:.1em;text-transform:uppercase;}
+
+/* partner card glassmorphism */
+.partner-card{
+  position:relative;
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:0;
+  border-radius:16px;
+  overflow:hidden;
+  background:rgba(11,15,22,.65);
+  backdrop-filter:blur(22px) saturate(160%);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:0 30px 80px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.04);
+  z-index:1;
+  /* animated gradient border */
+  border:1.5px solid transparent;
+  background-clip:padding-box;
+}
+.partner-card::before{
+  content:"";
+  position:absolute;
+  inset:-1.5px;
+  border-radius:17px;
+  background:conic-gradient(from var(--border-angle,0deg), var(--cyan), var(--violet), var(--blue), var(--cyan));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:borderSpin 6s linear infinite;
+  opacity:.7;
+  z-index:-1;
+}
+@property --border-angle{syntax:'<angle>';initial-value:0deg;inherits:false;}
+@keyframes borderSpin{to{--border-angle:360deg;}}
+
+/* photo side */
+.partner-photo-col{position:relative;overflow:hidden;min-height:420px;}
+.partner-photo-col img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;filter:contrast(1.05) saturate(1.1);transition:transform .6s cubic-bezier(.2,.7,.2,1);}
+.partner-card:hover .partner-photo-col img{transform:scale(1.04);}
+.partner-photo-frame-ring{position:absolute;inset:0;pointer-events:none;z-index:2;}
+.partner-photo-frame-ring::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(84,230,255,.18) 0%,transparent 40%,transparent 60%,rgba(142,123,255,.18) 100%);
+}
+.partner-photo-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 60%,rgba(11,15,22,.9));
+  z-index:1;
+  pointer-events:none;
+}
+.partner-photo-tag{
+  position:absolute;bottom:16px;left:16px;z-index:3;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;
+  color:var(--cyan);background:rgba(5,7,10,.65);
+  padding:5px 10px;border-radius:2px;backdrop-filter:blur(4px);
+  border:1px solid rgba(84,230,255,.3);
+  text-transform:uppercase;
+}
+
+/* details side */
+.partner-details{padding:40px 44px;display:flex;flex-direction:column;gap:18px;justify-content:center;}
+.partner-name{font-family:var(--font-display);font-size:clamp(22px,3vw,32px);font-weight:700;letter-spacing:-0.01em;line-height:1.1;}
+.partner-role{font-family:var(--font-mono);font-size:11px;color:var(--cyan);letter-spacing:.12em;text-transform:uppercase;}
+.partner-desc{color:var(--muted);font-size:14.5px;line-height:1.75;max-width:480px;}
+.partner-skills{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;}
+.partner-skills span{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;
+  color:var(--muted);border:1px solid var(--line);
+  padding:5px 11px;border-radius:14px;
+  transition:all .25s;
+}
+.partner-skills span:hover{color:var(--violet);border-color:var(--violet);background:rgba(142,123,255,.1);}
+.partner-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
+.btn-partner{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--font-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:13px 26px;border-radius:4px;
+  background:linear-gradient(135deg,rgba(84,230,255,.12),rgba(142,123,255,.08));
+  border:1px solid rgba(84,230,255,.4);
+  color:var(--cyan);
+  position:relative;overflow:hidden;
+  transition:transform .25s, box-shadow .3s, border-color .3s;
+  animation:partnerGlow 3s ease-in-out infinite;
+}
+@keyframes partnerGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(84,230,255,0);}
+  50%{box-shadow:0 0 24px rgba(84,230,255,.4), 0 0 48px rgba(84,230,255,.12);}
+}
+.btn-partner:hover{transform:translateY(-3px);border-color:var(--cyan);box-shadow:0 8px 32px rgba(84,230,255,.35);}
+.btn-partner::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(84,230,255,.18),transparent);
+  transform:translateX(-100%);transition:transform .5s;pointer-events:none;
+}
+.btn-partner:hover::before{transform:translateX(100%);}
+.btn-partner-email{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;
+  color:var(--muted);border:1px solid var(--line);
+  padding:12px 20px;border-radius:4px;
+  transition:color .25s, border-color .25s;
+}
+.btn-partner-email:hover{color:var(--cyan);border-color:var(--cyan);}
+
+/* photo glow ring (like about-photo-frame) */
+.partner-photo-glow-ring{
+  position:absolute;inset:-2px;border-radius:0;pointer-events:none;z-index:3;
+  padding:1px;
+  background:conic-gradient(from 0deg, var(--cyan), var(--violet), var(--blue), var(--cyan));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:rotateRing 8s linear infinite;
+  opacity:.5;
+}
+
+@media(max-width:820px){
+  .partner-card{grid-template-columns:1fr;}
+  .partner-photo-col{min-height:280px;}
+  .partner-photo-overlay{background:linear-gradient(180deg,transparent 60%,rgba(11,15,22,.9));}
+  .partner-details{padding:28px 24px;}
+  .collab-line{max-width:60px;}
+}
 </style>
 </head>
 <body>
@@ -698,6 +920,7 @@ body.recruiter .reveal{opacity:1!important;transform:none!important;}
     <a href="#stack" onclick="closeNav()">Stack</a>
     <a href="#about" onclick="closeNav()">About</a>
     <a href="#resume" onclick="closeNav()">Resume</a>
+    <a href="#partner" onclick="closeNav()">Partner</a>
     <a href="#contact" onclick="closeNav()">Contact</a>
   </div>
   <div class="nav-status"><span class="d"></span>ONLINE</div>
@@ -753,7 +976,7 @@ body.recruiter .reveal{opacity:1!important;transform:none!important;}
 <!-- INTRO / SYSTEM MINDSET -->
 <section class="section" id="mindset">
   <div class="wrap">
-    <div class="section-head reveal">
+    <div class="section-head reveal-left">
       <div class="eyebrow">System Mindset</div>
       <h2 class="title">Not just a developer.<br>A system builder.</h2>
       <p class="lead">I enjoy building systems where software doesn't simply display information, but understands inputs, processes context, makes decisions, performs actions, and verifies results.</p>
@@ -796,6 +1019,11 @@ body.recruiter .reveal{opacity:1!important;transform:none!important;}
         <span class="status-chip priv">Personal</span>
         <span class="status-chip priv">Experimental</span>
       </div>
+    </div>
+
+    <div class="model-viewer reveal" id="skCoreViewer">
+      <canvas id="sk-core-canvas"></canvas>
+      <div class="model-label">SK CORE // LIVE 3D RENDER</div>
     </div>
 
     <div class="eyebrow reveal" style="margin-top:70px;">SK Architecture</div>
@@ -850,7 +1078,7 @@ body.recruiter .reveal{opacity:1!important;transform:none!important;}
 <!-- PROJECTS -->
 <section class="section" id="work">
   <div class="wrap">
-    <div class="section-head reveal">
+    <div class="section-head reveal-blur">
       <div class="eyebrow">Project Universe</div>
       <h2 class="title">Systems I've actually built.</h2>
       <p class="lead">Real, shipped work — each one honestly labeled by status. No inflated claims, no fabricated metrics.</p>
@@ -872,10 +1100,14 @@ body.recruiter .reveal{opacity:1!important;transform:none!important;}
 <!-- TECH STACK -->
 <section class="section" id="stack">
   <div class="wrap">
-    <div class="section-head reveal">
+    <div class="section-head reveal-right">
       <div class="eyebrow">Technology</div>
       <h2 class="title">The stack behind the systems.</h2>
       <p class="lead">Grouped by what each tool is actually used for, not stacked as a logo wall.</p>
+    </div>
+    <div class="model-viewer model-viewer-sm reveal" id="techOrbViewer">
+      <canvas id="tech-orb-canvas"></canvas>
+      <div class="model-label">TECH ORB</div>
     </div>
     <div class="skill-matrix reveal" id="skillMatrix"></div>
   </div>
@@ -896,7 +1128,7 @@ body.recruiter .reveal{opacity:1!important;transform:none!important;}
 <!-- SZ LAB -->
 <section class="section" id="lab">
   <div class="wrap">
-    <div class="section-head reveal">
+    <div class="section-head reveal-scale">
       <div class="eyebrow">SZ Lab</div>
       <h2 class="title">Experiments, prototypes &amp; systems in progress.</h2>
       <p class="lead">Currently building — high-level descriptions only, no private implementation details exposed.</p>
@@ -1320,56 +1552,92 @@ body.recruiter .reveal{opacity:1!important;transform:none!important;}
     <!-- Certificate Details Cards with Proper Information -->
     <div class="cert-details-grid reveal">
       <!-- Detail Card 1 -->
-      <div class="cert-card">
-        <div class="cert-icon">🔐</div>
-        <h3>CCDE – Cybersecurity Expert</h3>
-        <div class="cert-issuer">CCDE Institute</div>
-        <div class="cert-date">📅 April 24, 2025</div>
-        <div class="cert-id-badge">
-          <span class="badge-label">Credential ID:</span>
-          <span class="badge-value">PREVIEW-6S-1725924024-Q0</span>
-        </div>
-        <p class="cert-desc">Certified Cyber Defense Professional Expert certification. Demonstrates advanced cybersecurity knowledge, defensive protocols, and security implementation expertise. Validates proficiency in cyber threat analysis and defense strategies.</p>
-        <div class="cert-tags">
-          <span>Cybersecurity</span>
-          <span>Defense</span>
-          <span>Expert</span>
+      <div class="cert-card" onclick="this.classList.toggle('flipped')">
+        <span class="cert-flip-hint">flip ↻</span>
+        <div class="cert-flip-inner">
+          <div class="cert-face cert-face-front">
+            <div class="cert-icon">🔐</div>
+            <h3>CCDE – Cybersecurity Expert</h3>
+            <div class="cert-issuer">CCDE Institute</div>
+            <div class="cert-date">📅 April 24, 2025</div>
+            <div class="cert-id-badge">
+              <span class="badge-label">Credential ID:</span>
+              <span class="badge-value">PREVIEW-6S-1725924024-Q0</span>
+            </div>
+            <p class="cert-desc">Certified Cyber Defense Professional Expert certification. Demonstrates advanced cybersecurity knowledge, defensive protocols, and security implementation expertise. Validates proficiency in cyber threat analysis and defense strategies.</p>
+            <div class="cert-tags">
+              <span>Cybersecurity</span>
+              <span>Defense</span>
+              <span>Expert</span>
+            </div>
+          </div>
+          <div class="cert-face cert-face-back">
+            <div class="cert-icon">🔐</div>
+            <div class="back-row"><span>Issuer</span><b>CCDE Institute</b></div>
+            <div class="back-row"><span>Issued</span><b>April 24, 2025</b></div>
+            <div class="back-row"><span>Credential ID</span><b>PREVIEW-6S-1725924024-Q0</b></div>
+            <p class="back-note">Tap again to flip back to the certificate summary.</p>
+          </div>
         </div>
       </div>
 
       <!-- Detail Card 2 -->
-      <div class="cert-card">
-        <div class="cert-icon">🛡️</div>
-        <h3>Cybersecurity Assessment</h3>
-        <div class="cert-issuer">LearnTube</div>
-        <div class="cert-date">📅 April 27, 2026</div>
-        <div class="cert-id-badge">
-          <span class="badge-label">Credential ID:</span>
-          <span class="badge-value">DJA-B-1-2432099-0</span>
-        </div>
-        <p class="cert-desc">Certificate of Completion for successfully completing Cybersecurity Assessment. Presented by Shronit Ladhani & Gargi Ruparelia, co-founders of LearnTube. Comprehensive security evaluation and professional verification.</p>
-        <div class="cert-tags">
-          <span>Assessment</span>
-          <span>Security</span>
-          <span>LearnTube</span>
+      <div class="cert-card" onclick="this.classList.toggle('flipped')">
+        <span class="cert-flip-hint">flip ↻</span>
+        <div class="cert-flip-inner">
+          <div class="cert-face cert-face-front">
+            <div class="cert-icon">🛡️</div>
+            <h3>Cybersecurity Assessment</h3>
+            <div class="cert-issuer">LearnTube</div>
+            <div class="cert-date">📅 April 27, 2026</div>
+            <div class="cert-id-badge">
+              <span class="badge-label">Credential ID:</span>
+              <span class="badge-value">DJA-B-1-2432099-0</span>
+            </div>
+            <p class="cert-desc">Certificate of Completion for successfully completing Cybersecurity Assessment. Presented by Shronit Ladhani & Gargi Ruparelia, co-founders of LearnTube. Comprehensive security evaluation and professional verification.</p>
+            <div class="cert-tags">
+              <span>Assessment</span>
+              <span>Security</span>
+              <span>LearnTube</span>
+            </div>
+          </div>
+          <div class="cert-face cert-face-back">
+            <div class="cert-icon">🛡️</div>
+            <div class="back-row"><span>Issuer</span><b>LearnTube</b></div>
+            <div class="back-row"><span>Issued</span><b>April 27, 2026</b></div>
+            <div class="back-row"><span>Credential ID</span><b>DJA-B-1-2432099-0</b></div>
+            <p class="back-note">Tap again to flip back to the certificate summary.</p>
+          </div>
         </div>
       </div>
 
       <!-- Detail Card 3 -->
-      <div class="cert-card">
-        <div class="cert-icon">🤖</div>
-        <h3>Google AI Fundamentals</h3>
-        <div class="cert-issuer">Coursera (Google)</div>
-        <div class="cert-date">📅 Issued 2025</div>
-        <div class="cert-id-badge">
-          <span class="badge-label">Verification:</span>
-          <span class="badge-value">coursera.org/verify</span>
-        </div>
-        <p class="cert-desc">Comprehensive artificial intelligence fundamentals course from Google. Covers machine learning principles, AI applications, practical implementation techniques, neural networks, and real-world AI use cases in modern development.</p>
-        <div class="cert-tags">
-          <span>AI</span>
-          <span>Machine Learning</span>
-          <span>Google</span>
+      <div class="cert-card" onclick="this.classList.toggle('flipped')">
+        <span class="cert-flip-hint">flip ↻</span>
+        <div class="cert-flip-inner">
+          <div class="cert-face cert-face-front">
+            <div class="cert-icon">🤖</div>
+            <h3>Google AI Fundamentals</h3>
+            <div class="cert-issuer">Coursera (Google)</div>
+            <div class="cert-date">📅 Issued 2025</div>
+            <div class="cert-id-badge">
+              <span class="badge-label">Verification:</span>
+              <span class="badge-value">coursera.org/verify</span>
+            </div>
+            <p class="cert-desc">Comprehensive artificial intelligence fundamentals course from Google. Covers machine learning principles, AI applications, practical implementation techniques, neural networks, and real-world AI use cases in modern development.</p>
+            <div class="cert-tags">
+              <span>AI</span>
+              <span>Machine Learning</span>
+              <span>Google</span>
+            </div>
+          </div>
+          <div class="cert-face cert-face-back">
+            <div class="cert-icon">🤖</div>
+            <div class="back-row"><span>Issuer</span><b>Coursera (Google)</b></div>
+            <div class="back-row"><span>Issued</span><b>2025</b></div>
+            <div class="back-row"><span>Verify at</span><b>coursera.org/verify</b></div>
+            <p class="back-note">Tap again to flip back to the certificate summary.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -1395,6 +1663,65 @@ body.recruiter .reveal{opacity:1!important;transform:none!important;}
         <div>
           <h4>Continuous Learning</h4>
           <p>Committed to professional development and latest technologies</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNER -->
+<section class="section" id="partner">
+  <canvas id="partner-particles"></canvas>
+  <div class="wrap">
+    <div class="section-head reveal" style="position:relative;z-index:1;">
+      <div class="eyebrow">Collaboration</div>
+      <h2 class="title">My Partner.</h2>
+      <p class="lead">The teammate behind the ideas. We build, learn, and grow together.</p>
+    </div>
+
+    <!-- Connection visual: Suraj ↔ Sudiksha -->
+    <div class="collab-nodes reveal">
+      <div class="collab-node">
+        <div class="collab-node-dot">SZ</div>
+        <div class="collab-node-label">Suraj</div>
+      </div>
+      <div class="collab-line"></div>
+      <div class="collab-mid">
+        <div class="collab-mid-icon">⟷</div>
+        <div class="collab-mid-text">Build</div>
+      </div>
+      <div class="collab-line"></div>
+      <div class="collab-node">
+        <div class="collab-node-dot" style="border-color:var(--violet);color:var(--violet);background:rgba(142,123,255,.12);box-shadow:0 0 24px rgba(142,123,255,.18);">SS</div>
+        <div class="collab-node-label">Sudiksha</div>
+      </div>
+    </div>
+
+    <!-- Partner card -->
+    <div class="partner-card reveal">
+      <div class="partner-photo-col">
+        <div class="partner-photo-glow-ring"></div>
+        <img src="Confident Tech Portfolio Portrait.png" alt="Sudiksha Shinde - Computer Science Student">
+        <div class="partner-photo-overlay"></div>
+        <div class="partner-photo-tag">SUDIKSHA SHINDE</div>
+      </div>
+      <div class="partner-details">
+        <div class="partner-role">First-Year CSE Student • PCCOER, Pune</div>
+        <div class="partner-name">Sudiksha Shinde</div>
+        <p class="partner-desc">Curious, clear, and always learning. I'm just starting my engineering journey and I enjoy turning ideas into things that work. Learning web development, data structures, algorithms, and exploring how AI can accelerate problem solving. Strong communicator with a focus on presentation and teamwork.</p>
+        <div class="partner-skills">
+          <span>Web Development</span>
+          <span>Programming Logic</span>
+          <span>Data Structures</span>
+          <span>Algorithms</span>
+          <span>Problem Solving</span>
+          <span>Communication</span>
+          <span>Presentation</span>
+          <span>Teamwork</span>
+        </div>
+        <div class="partner-links">
+          <a href="https://sudiksha-portfolio-ten.vercel.app/" target="_blank" rel="noopener" class="btn-partner">View Portfolio <span>↗</span></a>
+          <a href="mailto:sudikshadeepakshinde@gmail.com" class="btn-partner-email">📧 Email</a>
         </div>
       </div>
     </div>
@@ -1457,6 +1784,7 @@ body.recruiter .reveal{opacity:1!important;transform:none!important;}
         <a href="#sk">SK AI</a>
         <a href="#about">About</a>
         <a href="#resume">Resume</a>
+        <a href="#partner">Partner</a>
         <a href="#contact">Contact</a>
         <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
         <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
@@ -1591,7 +1919,7 @@ function closeNav(){ navLinks.classList.remove('open'); }
 const io = new IntersectionObserver((entries)=>{
   entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add('in'); });
 },{threshold:0.15});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-blur').forEach(el=>io.observe(el));
 
 /* ================= MINDSET FLOW SEQUENCE ================= */
 (function(){
@@ -2164,8 +2492,8 @@ if (!window.html2canvas) {
     try {
       // Determine API endpoint based on environment
       const isProduction = window.location.hostname !== 'localhost';
-      const apiEndpoint = isProduction 
-        ? '/api/send-message'  // Netlify serverless function
+      const apiEndpoint = isProduction
+        ? 'https://dhole-sir-coaching-classes-iqpg.onrender.com/api/send-message'  // Render backend
         : 'http://localhost:3001/api/send-message';  // Local development
       
       const response = await fetch(apiEndpoint, {
@@ -2569,6 +2897,18 @@ document.getElementById('recruiterToggle').addEventListener('click', ()=>{
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
+  // scroll-driven transition: core pushes in, expands and fades as the visitor scrolls past the hero
+  let scrollProgress = 0;
+  const heroEl = document.getElementById('hero');
+  function updateScrollProgress(){
+    if(!heroEl) return;
+    const rect = heroEl.getBoundingClientRect();
+    const h = rect.height || window.innerHeight;
+    scrollProgress = Math.min(Math.max(-rect.top / h, 0), 1);
+  }
+  window.addEventListener('scroll', updateScrollProgress, {passive:true});
+  updateScrollProgress();
+
   let t=0;
   function animate(){
     requestAnimationFrame(animate);
@@ -2578,17 +2918,242 @@ document.getElementById('recruiterToggle').addEventListener('click', ()=>{
       group.rotation.x = Math.sin(t*0.3)*0.08;
       rings.forEach((r,i)=>{ r.rotation.z += 0.0008*(i+1); });
       particles.rotation.y += 0.0002;
-      core.material.opacity = 0.3 + Math.sin(t*1.4)*0.06;
+      core.material.opacity = (0.3 + Math.sin(t*1.4)*0.06) * (1-scrollProgress*0.7);
     }
     targetX += (mouseX-targetX)*0.03;
     targetY += (mouseY-targetY)*0.03;
     group.rotation.y += targetX*0.002;
+    const scaleTarget = 1 + scrollProgress*0.9;
+    group.scale.setScalar(group.scale.x + (scaleTarget-group.scale.x)*0.06);
     camera.position.x += (targetX*1.4 - camera.position.x)*0.02;
     camera.position.y += (-targetY*1.0 - camera.position.y)*0.02;
+    camera.position.z += ((9 - scrollProgress*3.2) - camera.position.z)*0.04;
+    canvas.style.opacity = String(1 - scrollProgress*0.9);
     camera.lookAt(0,0,0);
     renderer.render(scene,camera);
   }
   animate();
+})();
+
+/* ================= SK CORE — dedicated 3D model widget ================= */
+(function(){
+  const canvas = document.getElementById('sk-core-canvas');
+  if(!canvas || !window.THREE) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wrap = canvas.parentElement;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 50);
+  camera.position.set(0,0,6.5);
+  let renderer;
+  try{ renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true}); }catch(e){ return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+  function fit(){
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    camera.aspect = w/h; camera.updateProjectionMatrix();
+    renderer.setSize(w,h,false);
+  }
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  const brainGeo = new THREE.IcosahedronGeometry(1.55, 3);
+  const brainMat = new THREE.MeshBasicMaterial({color:0x54e6ff, wireframe:true, transparent:true, opacity:0.5});
+  const brain = new THREE.Mesh(brainGeo, brainMat);
+  group.add(brain);
+
+  const coreGlow = new THREE.Mesh(new THREE.IcosahedronGeometry(0.55,1), new THREE.MeshBasicMaterial({color:0x54e6ff, transparent:true, opacity:0.5}));
+  group.add(coreGlow);
+
+  const shellGeo = new THREE.IcosahedronGeometry(1.95, 1);
+  const shellMat = new THREE.MeshBasicMaterial({color:0x8e7bff, wireframe:true, transparent:true, opacity:0.16});
+  const shell = new THREE.Mesh(shellGeo, shellMat);
+  group.add(shell);
+
+  const orbitGroup = new THREE.Group();
+  group.add(orbitGroup);
+  [1.0,1.3,1.6].forEach((rad,i)=>{
+    const dotGeo = new THREE.SphereGeometry(0.045,10,10);
+    const dotMat = new THREE.MeshBasicMaterial({color: i===1?0x8e7bff:0x3f7cff});
+    const dot = new THREE.Mesh(dotGeo, dotMat);
+    const orbit = new THREE.Group();
+    orbit.add(dot);
+    dot.position.set(rad,0,0);
+    orbit.rotation.x = Math.random()*Math.PI;
+    orbit.rotation.z = Math.random()*Math.PI;
+    orbit.userData.speed = 0.006 + i*0.003;
+    orbitGroup.add(orbit);
+  });
+
+  const light = new THREE.PointLight(0x54e6ff, 1, 10);
+  light.position.set(2,2,4);
+  scene.add(light);
+
+  let mx=0,my=0;
+  wrap.addEventListener('mousemove', e=>{
+    const r = wrap.getBoundingClientRect();
+    mx = ((e.clientX-r.left)/r.width - 0.5);
+    my = ((e.clientY-r.top)/r.height - 0.5);
+  });
+
+  let started=false;
+  function animate(){
+    requestAnimationFrame(animate);
+    if(!reduced){
+      brain.rotation.y += 0.0022; brain.rotation.x += 0.0009;
+      shell.rotation.y -= 0.0012;
+      coreGlow.scale.setScalar(1 + Math.sin(Date.now()*0.002)*0.12);
+      orbitGroup.children.forEach(o=> o.rotation.y += o.userData.speed);
+    }
+    group.rotation.y += (mx*0.6 - group.rotation.y)*0.04;
+    group.rotation.x += (-my*0.4 - group.rotation.x)*0.04;
+    renderer.render(scene,camera);
+  }
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting && !started){ started=true; fit(); animate(); }
+    });
+  },{threshold:0.15});
+  io.observe(wrap);
+  window.addEventListener('resize', fit);
+})();
+
+/* ================= TECH ORB — dedicated 3D model widget ================= */
+(function(){
+  const canvas = document.getElementById('tech-orb-canvas');
+  if(!canvas || !window.THREE) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wrap = canvas.parentElement;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 50);
+  camera.position.set(0,0,6);
+  let renderer;
+  try{ renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true}); }catch(e){ return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+  function fit(){
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    camera.aspect = w/h; camera.updateProjectionMatrix();
+    renderer.setSize(w,h,false);
+  }
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  const orbGeo = new THREE.IcosahedronGeometry(1.7, 1);
+  const orbMat = new THREE.MeshBasicMaterial({color:0x3f7cff, wireframe:true, transparent:true, opacity:0.35});
+  group.add(new THREE.Mesh(orbGeo, orbMat));
+
+  const dotCount = 26;
+  const dotColors = [0x54e6ff, 0x3f7cff, 0x8e7bff];
+  for(let i=0;i<dotCount;i++){
+    const r = 1.7 + (Math.random()-0.5)*0.15;
+    const theta = Math.random()*Math.PI*2;
+    const phi = Math.acos((Math.random()*2)-1);
+    const dot = new THREE.Mesh(
+      new THREE.SphereGeometry(0.04,8,8),
+      new THREE.MeshBasicMaterial({color: dotColors[i%3]})
+    );
+    dot.position.set(r*Math.sin(phi)*Math.cos(theta), r*Math.sin(phi)*Math.sin(theta), r*Math.cos(phi));
+    group.add(dot);
+  }
+
+  let mx=0;
+  wrap.addEventListener('mousemove', e=>{
+    const r = wrap.getBoundingClientRect();
+    mx = ((e.clientX-r.left)/r.width - 0.5);
+  });
+
+  let started=false;
+  function animate(){
+    requestAnimationFrame(animate);
+    if(!reduced){ group.rotation.y += 0.0025; }
+    group.rotation.y += mx*0.001;
+    group.rotation.x = Math.sin(Date.now()*0.0003)*0.15;
+    renderer.render(scene,camera);
+  }
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting && !started){ started=true; fit(); animate(); }
+    });
+  },{threshold:0.15});
+  io.observe(wrap);
+  window.addEventListener('resize', fit);
+})();
+
+/* ================= CERT CARD 3D PARALLAX TILT + GOLDEN SHIMMER ================= */
+(function(){
+  if(window.matchMedia('(hover:none)').matches) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced) return;
+  // inject shine divs
+  document.querySelectorAll('.cert-card').forEach(card=>{
+    if(!card.querySelector('.cert-shine')){
+      const shine = document.createElement('div');
+      shine.className='cert-shine';
+      card.appendChild(shine);
+    }
+    card.addEventListener('mousemove', e=>{
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX-r.left)/r.width;
+      const py = (e.clientY-r.top)/r.height;
+      const rx = (py-0.5)*-10;
+      const ry = (px-0.5)*10;
+      card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-10px) scale(1.02)`;
+      card.style.setProperty('--mx', (px*100)+'%');
+      card.style.setProperty('--my', (py*100)+'%');
+    });
+    card.addEventListener('mouseleave', ()=>{
+      card.style.transform='';
+    });
+  });
+})();
+
+/* ================= PARTNER: AMBIENT PARTICLES ================= */
+(function(){
+  const canvas = document.getElementById('partner-particles');
+  if(!canvas) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ctx = canvas.getContext('2d');
+  let w,h,particles=[];
+  function size(){
+    const rect = canvas.parentElement.getBoundingClientRect();
+    w = canvas.width = rect.width;
+    h = canvas.height = rect.height;
+  }
+  function init(){
+    size();
+    const count = window.innerWidth<760 ? 24 : 52;
+    particles = Array.from({length:count}, ()=>({
+      x: Math.random()*w, y: Math.random()*h,
+      r: Math.random()*1.8+0.3,
+      vx: (Math.random()-0.5)*0.12,
+      vy: (Math.random()-0.5)*0.12,
+      o: Math.random()*0.4+0.1,
+      hue: Math.random()<0.5 ? '84,230,255' : '142,123,255'
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    particles.forEach(p=>{
+      if(!reduced){ p.x+=p.vx; p.y+=p.vy; }
+      if(p.x<0) p.x=w; if(p.x>w) p.x=0;
+      if(p.y<0) p.y=h; if(p.y>h) p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(${p.hue},${p.o})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', ()=>{ size(); });
+  // start only when section is visible
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{ if(en.isIntersecting){ init(); draw(); io.disconnect(); } });
+  },{threshold:0.05});
+  io.observe(canvas.parentElement);
 })();
 </script>
 </body>
