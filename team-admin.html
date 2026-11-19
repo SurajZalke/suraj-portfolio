@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Admin — SZ</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22%23070a0f%22 stroke=%22%2354e6ff%22 stroke-width=%224%22/><circle cx=%2250%22 cy=%2250%22 r=%2214%22 fill=%22%2354e6ff%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Firebase compat SDK v9.23.0 -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+:root {
+  --bg: #05070a;
+  --surface: #0b0f16;
+  --surface-2: #0f141d;
+  --line: rgba(148,168,190,0.14);
+  --line-strong: rgba(148,168,190,0.28);
+  --text: #eef2f6;
+  --muted: #8a96a5;
+  --muted-2: #5c6674;
+  --cyan: #54e6ff;
+  --blue: #3f7cff;
+  --violet: #8e7bff;
+  --gold: #ffd97a;
+  --cyan-dim: rgba(84,230,255,0.12);
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; background: none; border: none; color: inherit; }
+::selection { background: var(--cyan); color: #05070a; }
+
+/* ---- PASSWORD GATE ---- */
+#gate {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+#gate.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.gate-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  max-width: 420px;
+  padding: 0 24px;
+}
+.gate-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.gate-logo-dot {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1.5px solid var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(84,230,255,0.22), inset 0 0 20px rgba(84,230,255,0.06);
+  animation: gateGlow 3s ease-in-out infinite;
+}
+@keyframes gateGlow {
+  0%,100% { box-shadow: 0 0 20px rgba(84,230,255,0.18), inset 0 0 10px rgba(84,230,255,0.04); }
+  50% { box-shadow: 0 0 50px rgba(84,230,255,0.45), inset 0 0 30px rgba(84,230,255,0.12); }
+}
+.gate-logo-dot span {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.gate-logo-dot span .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+}
+.gate-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-top: 4px;
+}
+.gate-box {
+  width: 100%;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: var(--surface);
+  padding: 32px;
+}
+.gate-box h1 {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.gate-box p {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.gate-input-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+.gate-input-wrap input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  letter-spacing: 0.3em;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s;
+  text-align: center;
+}
+.gate-input-wrap input::placeholder { letter-spacing: 0.1em; font-size: 13px; }
+.gate-input-wrap input:focus { border-color: var(--cyan); }
+.gate-input-wrap input.error { border-color: #ff7a7a; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  15%,45%,75% { transform: translateX(-8px); }
+  30%,60%,90% { transform: translateX(8px); }
+}
+.gate-input-wrap input.shake { animation: shake 0.45s ease; }
+.gate-error {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #ff7a7a;
+  margin-bottom: 16px;
+  min-height: 16px;
+  letter-spacing: 0.05em;
+}
+.gate-btn {
+  width: 100%;
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 14px;
+  border-radius: 2px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.gate-btn:hover { background: var(--cyan); transform: translateY(-2px); }
+.gate-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted-2);
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+/* ---- MAIN ADMIN PANEL ---- */
+#panel {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+}
+#panel.show { display: flex; }
+
+.admin-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(5,7,10,0.9);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.admin-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.admin-logo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.admin-logo .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+}
+.admin-title-block {
+  border-left: 1px solid var(--line);
+  padding-left: 20px;
+}
+.admin-title-block h2 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+.admin-title-block p {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+.admin-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.member-count-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--cyan);
+  border: 1px solid rgba(84,230,255,0.4);
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: rgba(84,230,255,0.06);
+}
+/* Firebase connection status */
+.fb-status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+}
+.fb-status .fb-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.fb-status.connected { color: #6ee7a0; border-color: rgba(110,231,160,0.3); background: rgba(110,231,160,0.06); }
+.fb-status.connected .fb-dot { background: #6ee7a0; box-shadow: 0 0 8px #6ee7a0; animation: fbBlink 2s infinite; }
+.fb-status.connecting { color: #ffc857; border-color: rgba(255,200,87,0.3); background: rgba(255,200,87,0.06); }
+.fb-status.connecting .fb-dot { background: #ffc857; }
+.fb-status.offline { color: #ff7a7a; border-color: rgba(255,80,80,0.3); background: rgba(255,80,80,0.06); }
+.fb-status.offline .fb-dot { background: #ff7a7a; }
+@keyframes fbBlink { 50% { opacity: 0.4; } }
+
+.btn-nav-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  border: 1px solid var(--line-strong);
+  padding: 8px 14px;
+  border-radius: 2px;
+  transition: color 0.2s, border-color 0.2s;
+  text-transform: uppercase;
+}
+.btn-nav-link:hover { color: var(--cyan); border-color: var(--cyan); }
+.btn-lock {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted-2);
+  border: 1px solid var(--line);
+  padding: 8px 14px;
+  border-radius: 2px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.btn-lock:hover { color: #ff7a7a; border-color: rgba(255,80,80,0.4); }
+
+/* ---- MAIN CONTENT ---- */
+.admin-content {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 32px;
+}
+
+/* ---- ACTIONS BAR ---- */
+.actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+.actions-bar h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+}
+.btn-seed {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  border: 1px solid rgba(255,217,122,0.4);
+  padding: 9px 16px;
+  border-radius: 2px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,217,122,0.06);
+}
+.btn-seed:hover { color: var(--gold); border-color: var(--gold); background: rgba(255,217,122,0.12); }
+.actions-right { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ---- MEMBER GRID ---- */
+#memberGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 48px;
+}
+@media (max-width: 760px) { #memberGrid { grid-template-columns: 1fr; } }
+
+/* Loading state */
+.grid-loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+}
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--line);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.grid-loading p {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 4px;
+}
+.empty-state p {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ---- MEMBER CARD ---- */
+.member-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 20px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.member-card:hover {
+  border-color: rgba(84,230,255,0.35);
+  box-shadow: 0 8px 32px rgba(84,230,255,0.08);
+}
+.mc-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.mc-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 14px;
+  border: 1.5px solid currentColor;
+  position: relative;
+  overflow: hidden;
+}
+.mc-avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.mc-info { flex: 1; min-width: 0; }
+.mc-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mc-college {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted-2);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.role-chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-top: 5px;
+}
+.role-chip.Member { color: var(--cyan); border: 1px solid rgba(84,230,255,0.45); background: rgba(84,230,255,0.08); }
+.role-chip.Co-Leader { color: var(--violet); border: 1px solid rgba(142,123,255,0.45); background: rgba(142,123,255,0.08); }
+.role-chip.Leader { color: var(--gold); border: 1px solid rgba(255,217,122,0.45); background: rgba(255,217,122,0.08); }
+
+.mc-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+.mc-skills span {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 3px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.04em;
+}
+.mc-bio {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+.mc-url {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--cyan);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  margin-bottom: 14px;
+}
+.mc-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  flex-wrap: wrap;
+}
+.mc-reorder {
+  display: flex;
+  gap: 4px;
+}
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: all 0.2s;
+  cursor: pointer;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.btn-icon:hover { color: var(--text); border-color: var(--muted); }
+.btn-icon.edit:hover { color: var(--cyan); border-color: var(--cyan); }
+.btn-icon.delete {
+  background: rgba(255,80,80,0.1);
+  color: #ff7a7a;
+  border-color: rgba(255,80,80,0.25);
+}
+.btn-icon.delete:hover {
+  background: rgba(255,80,80,0.22);
+  border-color: rgba(255,80,80,0.6);
+}
+.btn-icon:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ---- FORM SECTION ---- */
+.form-section {
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 32px;
+}
+.form-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.form-title span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 0.1em;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.form-group.full { grid-column: 1 / -1; }
+.form-group label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  padding: 11px 13px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { border-color: var(--cyan); }
+.form-group input.invalid,
+.form-group select.invalid,
+.form-group textarea.invalid { border-color: #ff7a7a; }
+.form-group select { cursor: pointer; }
+.form-group select option { background: var(--surface-2); }
+.form-group textarea { min-height: 80px; resize: vertical; }
+.form-inline-error {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #ff7a7a;
+  letter-spacing: 0.04em;
+}
+.form-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted-2);
+  letter-spacing: 0.04em;
+}
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.btn-save {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 13px 28px;
+  border-radius: 2px;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-save:hover { background: var(--cyan); transform: translateY(-2px); }
+.btn-cancel {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 13px 24px;
+  border-radius: 2px;
+  border: 1px solid var(--line-strong);
+  color: var(--muted);
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: none;
+}
+.btn-cancel.show { display: block; }
+.btn-cancel:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* ---- TOAST NOTIFICATIONS ---- */
+#toastContainer {
+  position: fixed;
+  top: 28px;
+  right: 28px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+.toast {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  padding: 12px 20px;
+  border-radius: 4px;
+  color: var(--text);
+  animation: toastIn 0.3s ease both;
+  min-width: 220px;
+  max-width: 320px;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes toastOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-8px); } }
+.toast.success { background: rgba(60,200,120,0.18); border: 1px solid rgba(60,200,120,0.5); color: #6ee7a0; }
+.toast.error { background: rgba(255,80,80,0.15); border: 1px solid rgba(255,80,80,0.4); color: #ff7a7a; }
+
+/* ---- SCROLLBAR ---- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-2); }
+
+@media (max-width: 600px) {
+  .admin-nav { padding: 14px 16px; }
+  .admin-content { padding: 24px 16px; }
+  .form-section { padding: 20px 16px; }
+  .admin-title-block { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div class="gate-inner">
+    <div class="gate-logo">
+      <div class="gate-logo-dot">
+        <span><span class="dot"></span>SZ</span>
+      </div>
+      <div class="gate-eyebrow">Admin Access Required</div>
+    </div>
+    <div class="gate-box">
+      <h1>Hackathon Team Admin</h1>
+      <p>Enter admin code to access the team management panel.</p>
+      <div class="gate-input-wrap">
+        <input type="password" id="gateInput" placeholder="Enter code" maxlength="12" autocomplete="off">
+      </div>
+      <div class="gate-error" id="gateError"></div>
+      <button class="gate-btn" id="gateBtn">Unlock Panel</button>
+    </div>
+    <div class="gate-hint">Client-side portfolio tool — session-scoped auth</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="panel">
+  <!-- NAV -->
+  <nav class="admin-nav">
+    <div class="admin-nav-left">
+      <div class="admin-logo"><span class="dot"></span>SZ</div>
+      <div class="admin-title-block">
+        <h2>Hackathon Team Admin</h2>
+        <p>Manage team members for your portfolio</p>
+      </div>
+    </div>
+    <div class="admin-nav-right">
+      <div class="fb-status connecting" id="fbStatus">
+        <span class="fb-dot"></span>
+        <span id="fbStatusText">CONNECTING...</span>
+      </div>
+      <span class="member-count-badge" id="memberCountBadge">— MEMBERS</span>
+      <a href="https://suraj-zalke-protfolio.netlify.app" target="_blank" class="btn-nav-link">🌐 View Portfolio</a>
+      <button class="btn-lock" id="lockBtn">🔒 Lock</button>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="admin-content">
+    <!-- ACTIONS BAR -->
+    <div class="actions-bar">
+      <h3>Team Members</h3>
+      <div class="actions-right">
+        <button class="btn-seed" id="seedBtn" style="display:none;">🌱 Seed Default Members</button>
+      </div>
+    </div>
+
+    <!-- MEMBER GRID -->
+    <div id="memberGrid">
+      <div class="grid-loading">
+        <div class="spinner"></div>
+        <p>Connecting to Firebase...</p>
+      </div>
+    </div>
+
+    <!-- ADD / EDIT FORM -->
+    <div class="form-section" id="formSection">
+      <div class="form-title">
+        <span id="formMode">ADD NEW MEMBER</span>
+        <span id="formTitleText">Add Member</span>
+      </div>
+      <form id="memberForm" novalidate>
+        <input type="hidden" id="editId">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="fName">Full Name *</label>
+            <input type="text" id="fName" placeholder="e.g. Sarvesh Patil" required>
+            <div class="form-inline-error" id="errName"></div>
+          </div>
+          <div class="form-group">
+            <label for="fRole">Role</label>
+            <select id="fRole">
+              <option value="Member">Member</option>
+              <option value="Co-Leader">Co-Leader</option>
+              <option value="Leader">Leader</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fCollege">College *</label>
+            <input type="text" id="fCollege" placeholder="e.g. PCCOER, Pune" required>
+            <div class="form-inline-error" id="errCollege"></div>
+          </div>
+          <div class="form-group">
+            <label for="fUrl">Portfolio URL *</label>
+            <input type="url" id="fUrl" placeholder="https://yourportfolio.vercel.app" required>
+            <div class="form-inline-error" id="errUrl"></div>
+          </div>
+          <div class="form-group">
+            <label for="fPhoto">Photo URL <span style="color:var(--muted-2);font-size:9px;">(optional)</span></label>
+            <input type="text" id="fPhoto" placeholder="https://... (blank = initials avatar)">
+          </div>
+          <div class="form-group">
+            <label for="fSkills">Skills <span style="color:var(--muted-2);font-size:9px;">(comma-separated, up to 5)</span></label>
+            <input type="text" id="fSkills" placeholder="Python, React, AI">
+          </div>
+          <div class="form-group full">
+            <label for="fBio">Short Bio <span style="color:var(--muted-2);font-size:9px;">(optional, max 150 chars)</span></label>
+            <textarea id="fBio" placeholder="A short bio about this member..." maxlength="150"></textarea>
+            <div class="form-hint"><span id="bioCount">0</span>/150 characters</div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-save">Save Member</button>
+          <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toastContainer"></div>
+
+<script>
+/* ========== FIREBASE INIT ========== */
+const firebaseConfig = {
+  apiKey: "REDACTED_FIREBASE_API_KEY",
+  authDomain: "suraj-portfolio-team.firebaseapp.com",
+  databaseURL: "https://suraj-portfolio-team-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "suraj-portfolio-team",
+  storageBucket: "suraj-portfolio-team.firebasestorage.app",
+  messagingSenderId: "865790328422",
+  appId: "1:865790328422:web:49f481138ff1c0639fb7a7"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.database();
+const membersRef = db.ref('team_members');
+
+/* ========== CONSTANTS ========== */
+const AUTH_KEY = 'sz_admin_auth';
+const CORRECT_PASS = '261205';
+
+const DEFAULT_SEED = [
+  { name:'Sarvesh Patil', role:'Member', college:'PCCOER, Pune', url:'https://sarvesh-portfolio-rust.vercel.app/', photo:'', skills:'C, DSA, AI & ML', bio:'Learning enthusiast building from the basics up.', order:1 },
+  { name:'Srujal Morankar', role:'Member', college:'PCCOER, Pune', url:'https://srujal-portfolio-wine.vercel.app/', photo:'', skills:'Python, C, Linux', bio:'Curious and determined, improving every week.', order:2 },
+  { name:'Samiksha Ghodekar', role:'Co-Leader', college:'PCCoER, Pune', url:'https://samiksha-portfolio-rho.vercel.app/', photo:'', skills:'Leadership, C, Python', bio:'A leader who is learning to code.', order:3 },
+  { name:'Sarthak Gaikwad', role:'Member', college:'PCCOER, Pune', url:'https://sarthak-portfolio-topaz-xi.vercel.app/', photo:'', skills:'Generative AI, Google Cloud, C', bio:'Learning C, Generative AI and Google Cloud.', order:4 }
+];
+
+/* ========== AUTH ========== */
+function checkAuth() { return sessionStorage.getItem(AUTH_KEY) === '1'; }
+function setAuth() { try { sessionStorage.setItem(AUTH_KEY, '1'); } catch(e) {} }
+function clearAuth() { try { sessionStorage.removeItem(AUTH_KEY); } catch(e) {} }
+
+/* ========== GATE ========== */
+const gate = document.getElementById('gate');
+const panel = document.getElementById('panel');
+const gateInput = document.getElementById('gateInput');
+const gateBtn = document.getElementById('gateBtn');
+const gateError = document.getElementById('gateError');
+
+function unlock() {
+  gate.classList.add('hide');
+  panel.classList.add('show');
+  startFirebaseListeners();
+}
+
+function tryUnlock() {
+  const val = gateInput.value.trim();
+  if (val === CORRECT_PASS) {
+    setAuth();
+    gateError.textContent = '';
+    gateInput.classList.remove('error', 'shake');
+    unlock();
+  } else {
+    gateError.textContent = 'Access denied. Incorrect code.';
+    gateInput.classList.add('error');
+    gateInput.classList.remove('shake');
+    void gateInput.offsetWidth;
+    gateInput.classList.add('shake');
+    gateInput.addEventListener('animationend', () => gateInput.classList.remove('shake'), { once: true });
+    gateInput.select();
+  }
+}
+
+gateBtn.addEventListener('click', tryUnlock);
+gateInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+
+if (checkAuth()) {
+  unlock();
+}
+
+/* ========== LOCK ========== */
+document.getElementById('lockBtn').addEventListener('click', () => {
+  clearAuth();
+  gate.classList.remove('hide');
+  panel.classList.remove('show');
+  gateInput.value = '';
+  gateError.textContent = '';
+});
+
+/* ========== FIREBASE LISTENERS ========== */
+let membersListenerActive = false;
+
+function startFirebaseListeners() {
+  if (membersListenerActive) return;
+  membersListenerActive = true;
+
+  // Connection status
+  db.ref('.info/connected').on('value', snap => {
+    const connected = snap.val() === true;
+    const fbStatus = document.getElementById('fbStatus');
+    const fbStatusText = document.getElementById('fbStatusText');
+    if (connected) {
+      fbStatus.className = 'fb-status connected';
+      fbStatusText.textContent = 'FIREBASE CONNECTED';
+    } else {
+      fbStatus.className = 'fb-status offline';
+      fbStatusText.textContent = 'OFFLINE';
+    }
+  });
+
+  // Members real-time listener
+  membersRef.on('value', snap => {
+    const data = snap.val();
+    if (!data) {
+      renderGrid([]);
+      document.getElementById('seedBtn').style.display = 'flex';
+    } else {
+      const members = Object.entries(data).map(([id, m]) => ({ id, ...m }));
+      members.sort((a, b) => (a.order || 0) - (b.order || 0));
+      renderGrid(members);
+      document.getElementById('seedBtn').style.display = 'none';
+    }
+  }, err => {
+    console.error('Firebase read error:', err);
+    showToast('Firebase error: ' + err.message, 'error');
+    renderGrid([]);
+  });
+}
+
+/* ========== AVATAR ========== */
+function getInitials(name) {
+  return name.trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+const AVATAR_COLORS = [
+  ['#8e7bff','rgba(142,123,255,0.25)'],
+  ['#54e6ff','rgba(84,230,255,0.25)'],
+  ['#3f7cff','rgba(63,124,255,0.25)'],
+  ['#5df0b8','rgba(93,240,184,0.25)'],
+  ['#ff7ab6','rgba(255,122,182,0.25)'],
+  ['#ffc857','rgba(255,200,87,0.25)'],
+];
+function avatarStyle(idx) {
+  const [c, bg] = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+  return `color:${c};background:${bg};border-color:${c};`;
+}
+
+/* ========== RENDER GRID ========== */
+function renderGrid(members) {
+  const grid = document.getElementById('memberGrid');
+  grid.innerHTML = '';
+
+  updateCount(members.length);
+
+  if (members.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><p>No team members yet. Add your first member below.</p></div>';
+    return;
+  }
+
+  members.forEach((m, idx) => {
+    const card = document.createElement('div');
+    card.className = 'member-card';
+    card.dataset.id = m.id;
+
+    const initials = getInitials(m.name);
+    const aStyle = avatarStyle(idx);
+    const avatarInner = m.photo
+      ? `<img src="${escHtml(m.photo)}" alt="${escHtml(m.name)}" onerror="this.style.display='none'">${initials}`
+      : initials;
+
+    const skillsArr = m.skills ? m.skills.split(',').map(s => s.trim()).filter(Boolean).slice(0, 5) : [];
+    const skillChips = skillsArr.map(s => `<span>${escHtml(s)}</span>`).join('');
+
+    const urlHost = (() => { try { return new URL(m.url).hostname; } catch(e) { return m.url; } })();
+    const isFirst = idx === 0;
+    const isLast = idx === members.length - 1;
+    const safeId = escHtml(m.id);
+
+    card.innerHTML = `
+      <div class="mc-header">
+        <div class="mc-avatar" style="${aStyle}">${avatarInner}</div>
+        <div class="mc-info">
+          <div class="mc-name">${escHtml(m.name)}</div>
+          <div class="mc-college">${escHtml(m.college)}</div>
+          <span class="role-chip ${escHtml(m.role)}">${escHtml(m.role)}</span>
+        </div>
+      </div>
+      ${skillChips ? `<div class="mc-skills">${skillChips}</div>` : ''}
+      ${m.bio ? `<div class="mc-bio">"${escHtml(m.bio)}"</div>` : ''}
+      <a href="${escHtml(m.url)}" target="_blank" class="mc-url">↗ ${escHtml(urlHost)}</a>
+      <div class="mc-actions">
+        <div class="mc-reorder">
+          <button class="btn-icon" title="Move up" ${isFirst ? 'disabled' : ''} data-action="up" data-id="${safeId}">↑</button>
+          <button class="btn-icon" title="Move down" ${isLast ? 'disabled' : ''} data-action="down" data-id="${safeId}">↓</button>
+        </div>
+        <button class="btn-icon edit" title="Edit member" data-action="edit" data-id="${safeId}">✏</button>
+        <button class="btn-icon delete" title="Delete member" data-action="delete" data-id="${safeId}" data-name="${escHtml(m.name)}">🗑</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// Event delegation for card actions
+document.getElementById('memberGrid').addEventListener('click', e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === 'edit') editMember(id);
+  else if (action === 'delete') deleteMember(id, btn.dataset.name);
+  else if (action === 'up') reorderMember(id, 'up');
+  else if (action === 'down') reorderMember(id, 'down');
+});
+
+function updateCount(n) {
+  const badge = document.getElementById('memberCountBadge');
+  if (badge) badge.textContent = n + ' MEMBER' + (n !== 1 ? 'S' : '');
+}
+
+/* ========== REORDER ========== */
+function reorderMember(id, dir) {
+  membersRef.once('value').then(snap => {
+    const data = snap.val();
+    if (!data) return;
+    const members = Object.entries(data).map(([k, v]) => ({ id: k, ...v }));
+    members.sort((a, b) => (a.order || 0) - (b.order || 0));
+    const idx = members.findIndex(m => m.id === id);
+    if (idx === -1) return;
+    const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= members.length) return;
+
+    const orderA = members[idx].order || idx + 1;
+    const orderB = members[swapIdx].order || swapIdx + 1;
+
+    const updates = {};
+    updates[`team_members/${members[idx].id}/order`] = orderB;
+    updates[`team_members/${members[swapIdx].id}/order`] = orderA;
+
+    db.ref().update(updates)
+      .then(() => showToast('Order updated.', 'success'))
+      .catch(err => showToast('Error: ' + err.message, 'error'));
+  });
+}
+
+/* ========== DELETE ========== */
+function deleteMember(id, name) {
+  if (!confirm(`Delete ${name} from the team? This cannot be undone.`)) return;
+  membersRef.child(id).remove()
+    .then(() => {
+      showToast(`${name} removed from team.`, 'success');
+      if (document.getElementById('editId').value === id) resetForm();
+    })
+    .catch(err => showToast('Delete error: ' + err.message, 'error'));
+}
+
+/* ========== EDIT ========== */
+let currentEditData = {};
+
+function editMember(id) {
+  membersRef.child(id).once('value').then(snap => {
+    const m = snap.val();
+    if (!m) return;
+    currentEditData = { id, ...m };
+
+    document.getElementById('editId').value = id;
+    document.getElementById('fName').value = m.name || '';
+    document.getElementById('fRole').value = m.role || 'Member';
+    document.getElementById('fCollege').value = m.college || '';
+    document.getElementById('fUrl').value = m.url || '';
+    document.getElementById('fPhoto').value = m.photo || '';
+    document.getElementById('fSkills').value = m.skills || '';
+    document.getElementById('fBio').value = m.bio || '';
+    updateBioCount();
+
+    document.getElementById('formMode').textContent = 'EDIT MEMBER';
+    document.getElementById('formTitleText').textContent = 'Edit Member';
+    document.querySelector('.btn-cancel').classList.add('show');
+
+    document.getElementById('formSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+function resetForm() {
+  document.getElementById('editId').value = '';
+  document.getElementById('memberForm').reset();
+  document.getElementById('formMode').textContent = 'ADD NEW MEMBER';
+  document.getElementById('formTitleText').textContent = 'Add Member';
+  document.querySelector('.btn-cancel').classList.remove('show');
+  updateBioCount();
+  clearFormErrors();
+  currentEditData = {};
+}
+
+function clearFormErrors() {
+  ['fName','fCollege','fUrl'].forEach(id => {
+    document.getElementById(id).classList.remove('invalid');
+  });
+  document.getElementById('errName').textContent = '';
+  document.getElementById('errCollege').textContent = '';
+  document.getElementById('errUrl').textContent = '';
+}
+
+document.getElementById('cancelBtn').addEventListener('click', resetForm);
+
+/* ========== FORM SUBMIT ========== */
+document.getElementById('memberForm').addEventListener('submit', e => {
+  e.preventDefault();
+
+  const name = document.getElementById('fName').value.trim();
+  const role = document.getElementById('fRole').value;
+  const college = document.getElementById('fCollege').value.trim();
+  const url = document.getElementById('fUrl').value.trim();
+  const photo = document.getElementById('fPhoto').value.trim();
+  const skills = document.getElementById('fSkills').value.trim();
+  const bio = document.getElementById('fBio').value.trim();
+  const editId = document.getElementById('editId').value;
+
+  clearFormErrors();
+  let valid = true;
+
+  if (!name) {
+    document.getElementById('fName').classList.add('invalid');
+    document.getElementById('errName').textContent = 'Name is required.';
+    valid = false;
+  }
+  if (!college) {
+    document.getElementById('fCollege').classList.add('invalid');
+    document.getElementById('errCollege').textContent = 'College is required.';
+    valid = false;
+  }
+  if (!url || !url.startsWith('http')) {
+    document.getElementById('fUrl').classList.add('invalid');
+    document.getElementById('errUrl').textContent = 'A valid URL starting with http is required.';
+    valid = false;
+  }
+
+  if (!valid) {
+    showToast('Please fill in all required fields.', 'error');
+    return;
+  }
+
+  const data = { name, role, college, url, photo, skills, bio };
+
+  if (editId) {
+    data.order = currentEditData.order || 0;
+    data.addedAt = currentEditData.addedAt || Date.now();
+    membersRef.child(editId).update(data)
+      .then(() => {
+        showToast(`${name} updated successfully.`, 'success');
+        resetForm();
+      })
+      .catch(err => showToast('Update error: ' + err.message, 'error'));
+  } else {
+    // Get current max order
+    membersRef.once('value').then(snap => {
+      const existing = snap.val();
+      let maxOrder = 0;
+      if (existing) {
+        maxOrder = Math.max(...Object.values(existing).map(m => m.order || 0));
+      }
+      data.order = maxOrder + 1;
+      data.addedAt = Date.now();
+      membersRef.push(data)
+        .then(() => {
+          showToast(`${name} added to the team.`, 'success');
+          resetForm();
+        })
+        .catch(err => showToast('Add error: ' + err.message, 'error'));
+    });
+  }
+});
+
+/* ========== SEED ========== */
+document.getElementById('seedBtn').addEventListener('click', () => {
+  if (!confirm('Seed 4 default members into Firebase? This will only run if the node is empty.')) return;
+  const pushes = DEFAULT_SEED.map(m => membersRef.push({ ...m, addedAt: Date.now() }));
+  Promise.all(pushes)
+    .then(() => {
+      showToast('Default members seeded successfully.', 'success');
+      document.getElementById('seedBtn').style.display = 'none';
+    })
+    .catch(err => showToast('Seed error: ' + err.message, 'error'));
+});
+
+/* ========== BIO COUNTER ========== */
+function updateBioCount() {
+  const bio = document.getElementById('fBio').value;
+  document.getElementById('bioCount').textContent = bio.length;
+}
+document.getElementById('fBio').addEventListener('input', updateBioCount);
+
+/* ========== TOAST ========== */
+function showToast(msg, type) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'toastOut 0.3s ease both';
+    toast.addEventListener('animationend', () => toast.remove(), { once: true });
+  }, 3000);
+}
+
+/* ========== UTIL ========== */
+function escHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+</script>
+</body>
+</html>
