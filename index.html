@@ -2599,9 +2599,9 @@ body.booting{overflow:hidden;}
     </div>
 
     <div class="team-stats t-fx">
-      <div class="team-stat"><b data-count="6">00</b><span>Members</span></div>
-      <div class="team-stat"><b data-count="5">00</b><span>Live portfolios</span></div>
-      <div class="team-stat"><b data-count="3">00</b><span>Hackathon tracks</span></div>
+      <div class="team-stat"><b id="stat-members">00</b><span>Members</span></div>
+      <div class="team-stat"><b id="stat-portfolios">00</b><span>Live portfolios</span></div>
+      <div class="team-stat"><b id="stat-tracks">03</b><span>Hackathon tracks</span></div>
     </div>
 
     <div class="orbit-wrap">
@@ -4454,15 +4454,12 @@ document.getElementById('recruiterToggle').addEventListener('click', ()=>{
 
   /* -- Stats update -- */
   function updateStats(members) {
-    var countEl = document.querySelector('[data-count]');
-    if (countEl) {
-      var parent = countEl.closest('.team-stats');
-      if (parent) {
-        var allCounts = parent.querySelectorAll('[data-count]');
-        if (allCounts[0]) { allCounts[0].setAttribute('data-count', members.length); allCounts[0].textContent = String(members.length).padStart(2,'0'); }
-        var withUrl = members.filter(function(m){ return m.url && m.url.startsWith('http'); }).length;
-        if (allCounts[1]) { allCounts[1].setAttribute('data-count', withUrl); allCounts[1].textContent = String(withUrl).padStart(2,'0'); }
-      }
+    var elMembers = document.getElementById('stat-members');
+    var elPortfolios = document.getElementById('stat-portfolios');
+    if (elMembers) elMembers.textContent = String(members.length).padStart(2, '0');
+    if (elPortfolios) {
+      var withUrl = members.filter(function(m) { return m.url && m.url.startsWith('http'); }).length;
+      elPortfolios.textContent = String(withUrl).padStart(2, '0');
     }
   }
 
