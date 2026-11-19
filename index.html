@@ -2608,22 +2608,7 @@ body.booting{overflow:hidden;}
       <div class="orbit" id="teamOrbit" role="img" aria-label="Team formation: Suraj at the center with five members orbiting">
         <div class="orbit-sweep"></div>
         <div class="orbit-circle c2"></div><div class="orbit-circle c1"></div><div class="orbit-circle c3"></div>
-        <div class="orbit-ring">
-        <div class="arm" style="--a:-90deg;--k:0"><span class="spoke"></span>
-          <div class="tnode"><div class="tnode-in"><a href="#tm-sarvesh" data-tm="sarvesh" aria-label="Sarvesh Patil"><div class="pop"><div class="av" style="--c1:#8e7bff">SP</div><div class="nm">Sarvesh</div></div></a></div></div>
-        </div>
-        <div class="arm" style="--a:-18deg;--k:1"><span class="spoke"></span>
-          <div class="tnode"><div class="tnode-in"><a href="#tm-srujal" data-tm="srujal" aria-label="Srujal Morankar"><div class="pop"><div class="av" style="--c1:#3f7cff">SM</div><div class="nm">Srujal</div></div></a></div></div>
-        </div>
-        <div class="arm" style="--a:54deg;--k:2"><span class="spoke"></span>
-          <div class="tnode"><div class="tnode-in"><a href="#tm-samiksha" data-tm="samiksha" aria-label="Samiksha Ghodekar"><div class="pop"><div class="av" style="--c1:#5df0b8">SG</div><div class="nm">Samiksha</div></div></a></div></div>
-        </div>
-        <div class="arm" style="--a:126deg;--k:3"><span class="spoke"></span>
-          <div class="tnode"><div class="tnode-in"><a href="#tm-sarthak" data-tm="sarthak" aria-label="Sarthak Gaikwad"><div class="pop"><div class="av" style="--c1:#ff7ab6">SaG</div><div class="nm">Sarthak</div></div></a></div></div>
-        </div>
-        <div class="arm" style="--a:198deg;--k:4"><span class="spoke"></span>
-          <div class="tnode"><div class="tnode-in"><a href="#tm-shivlila" data-tm="shivlila" aria-label="Shivlila Mashalkar"><div class="pop"><div class="av" style="--c1:#ffc857">SRM</div><div class="nm">Shivlila</div></div></a></div></div>
-        </div>
+        <div class="orbit-ring" id="orbitRing">
         </div>
         <div class="orbit-core"><div><b>SZ</b><small>LEADER</small></div></div>
       </div>
@@ -4392,7 +4377,7 @@ document.getElementById('recruiterToggle').addEventListener('click', ()=>{
 
   /* -- Firebase init (compat SDK, no import) -- */
   var firebaseConfig = {
-    apiKey: "REDACTED_FIREBASE_API_KEY",
+    apiKey: "AIzaSyDpeQgZrNPuhKVUy2_6TgVHV6sL16i4PWw",
     authDomain: "suraj-portfolio-team.firebaseapp.com",
     databaseURL: "https://suraj-portfolio-team-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "suraj-portfolio-team",
@@ -4440,21 +4425,18 @@ document.getElementById('recruiterToggle').addEventListener('click', ()=>{
 
   /* -- Orbit update -- */
   function updateOrbit(members) {
-    var orbitEl = document.getElementById('teamOrbit');
-    if (!orbitEl) return;
-
-    var capped = members.slice(0, 8);
-    var n = capped.length;
-    if (n === 0) return;
-
-    var orbitRing = orbitEl.querySelector('.orbit-ring');
+    var orbitRing = document.getElementById('orbitRing');
     if (!orbitRing) return;
 
-    // Clear existing arms (keep non-arm children)
-    var toRemove = Array.from(orbitRing.querySelectorAll('.arm'));
-    toRemove.forEach(function(el) { el.remove(); });
+    // Clear existing arms
+    orbitRing.innerHTML = '';
 
-    capped.forEach(function(m, i) {
+    var n = members.length;
+    if (n === 0) return;
+
+    // For > 8 members use two rings: inner (up to 8) + outer label ring
+    // We show all members evenly spaced regardless of count
+    members.forEach(function(m, i) {
       var angle = (360 / n) * i - 90;
       var initials = getInitials(m.name);
       var color = AVATAR_COLORS[i % AVATAR_COLORS.length][0];
@@ -4468,6 +4450,20 @@ document.getElementById('recruiterToggle').addEventListener('click', ()=>{
         '<div class="nm">' + esc(firstName) + '</div></div></a></div></div>';
       orbitRing.appendChild(arm);
     });
+  }
+
+  /* -- Stats update -- */
+  function updateStats(members) {
+    var countEl = document.querySelector('[data-count]');
+    if (countEl) {
+      var parent = countEl.closest('.team-stats');
+      if (parent) {
+        var allCounts = parent.querySelectorAll('[data-count]');
+        if (allCounts[0]) { allCounts[0].setAttribute('data-count', members.length); allCounts[0].textContent = String(members.length).padStart(2,'0'); }
+        var withUrl = members.filter(function(m){ return m.url && m.url.startsWith('http'); }).length;
+        if (allCounts[1]) { allCounts[1].setAttribute('data-count', withUrl); allCounts[1].textContent = String(withUrl).padStart(2,'0'); }
+      }
+    }
   }
 
   /* -- Cards render -- */
@@ -4544,6 +4540,7 @@ document.getElementById('recruiterToggle').addEventListener('click', ()=>{
     });
 
     updateOrbit(members);
+    updateStats(members);
   }
 
   /* -- Firebase listener -- */
