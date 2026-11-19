@@ -872,6 +872,7 @@ const panel = document.getElementById('panel');
 const gateInput = document.getElementById('gateInput');
 const gateBtn = document.getElementById('gateBtn');
 const gateError = document.getElementById('gateError');
+let membersListenerActive = false;
 
 function unlock() {
   gate.classList.add('hide');
@@ -914,8 +915,6 @@ document.getElementById('lockBtn').addEventListener('click', () => {
 });
 
 /* ========== FIREBASE LISTENERS ========== */
-let membersListenerActive = false;
-
 function startFirebaseListeners() {
   if (membersListenerActive) return;
   membersListenerActive = true;
